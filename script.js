@@ -16,6 +16,7 @@ function init() {
     values.length = 1; values.fill(0);
     pointerIndex=0;
     oldCode = "";
+    output = "";
     addBlock();
     updateBlocks();
 }
