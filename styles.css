@@ -63,7 +63,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #ccc;
+    border: 1px solid black;
     font-size: 30px;
     font-weight: bold;
     margin: 5px;
@@ -74,6 +74,7 @@ body {
 
 .block.current {
     background-color: #FFC107;
+    border: 3px solid black;
 }
 
 /* Button style */
