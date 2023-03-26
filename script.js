@@ -170,4 +170,3 @@ document.getElementById("code").addEventListener("input", function() {
     console.log(values[pointerIndex] + " " + pointerIndex);
 });
 
-
