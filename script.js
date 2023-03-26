@@ -19,7 +19,14 @@ function init() {
 
 function updateBlocks() {
     let blocks = document.querySelectorAll(".block");
-    blocks[pointerIndex].textContent = values[pointerIndex] ;
+    for (let i = 0; i < blocks.length; i++) {
+        if (i === pointerIndex) {
+            blocks[i].classList.add("current");
+        } else {
+            blocks[i].classList.remove("current");
+        }
+        blocks[i].textContent = values[i];
+    }
 
 }
 
@@ -31,10 +38,10 @@ function addBlock() {
 }
 
 function removeBlocks() {
-  let blocks = document.querySelectorAll(".block");
-  for (let i = 0; i < blocks.length; i++) {
-    blocksContainer.removeChild(blocks[i]);
-  }
+    let blocks = document.querySelectorAll(".block");
+    for (let i = 0; i < blocks.length; i++) {
+      blocksContainer.removeChild(blocks[i]);
+    }
 }
 
 

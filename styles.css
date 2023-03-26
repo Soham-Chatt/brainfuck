@@ -12,3 +12,7 @@
 .block-row {
   display: flex;
 }
+
+.block.current {
+    background-color: #FFC107;
+}
