@@ -1,6 +1,6 @@
 // script.js
 
-let values = new Array(1).fill(0);
+let values = new Array(2).fill(0);
 let pointerIndex = 0;
 let blocksContainer = document.querySelector(".block-row");
 let oldCode = "";
@@ -13,11 +13,11 @@ function init() {
     removeBlocks();
     document.getElementById("output").value = "";
     document.getElementById("code").value = "";
-    values.length = 1; values.fill(0);
+    values.length = 2; values.fill(0);
     pointerIndex=0;
     oldCode = "";
     output = "";
-    addBlock();
+    addBlock(); addBlock();
     updateBlocks();
 }
 
@@ -43,7 +43,7 @@ function addBlock() {
 
 function removeBlocks() {
     let blocks = document.querySelectorAll(".block");
-    for (let i = 0; i < blocks.length; i++) {
+    for (let i = 0; i < blocks.length-1; i++) {
       blocksContainer.removeChild(blocks[i]);
     }
 }
@@ -155,12 +155,10 @@ document.getElementById("code").addEventListener("keydown", function(event) {
             currentCode = currentCode.slice(0, -1);
         }
         removeBlocks();
-        values.length = 1; values.fill(0);
+        values.length = 2; values.fill(0);
         pointerIndex=0;
         oldCode = "";
         output = "";
-        addBlock();
-        updateBlocks();
         handleCodeInput(currentCode);
     }
 });
