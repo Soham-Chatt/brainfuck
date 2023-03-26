@@ -182,4 +182,3 @@ document.getElementById("code").addEventListener("input", function() {
     console.log(value);
     console.log(values[pointerIndex] + " " + pointerIndex);
 });
-
