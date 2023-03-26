@@ -45,13 +45,14 @@ function removeBlocks() {
     }
 }
 
-
 function handleCodeInput(code) {
-    // Find the first index at which oldCode and code differ
     let diffIndex = 0;
-    let startIndex = -1;
     let loopStack = [];
+    let inLoop = false;
+    let openIndex;
+    let closeIndex;
 
+    // Find the first index at which oldCode and code differ
     while (diffIndex < oldCode.length && diffIndex < code.length && oldCode[diffIndex] === code[diffIndex]) {
         if (oldCode[diffIndex] === "[") {
             loopStack.push(diffIndex);
@@ -70,98 +71,73 @@ function handleCodeInput(code) {
     }
 
     // Apply updates to program state
-    while (diffIndex < oldCode.length) {
-        switch (oldCode[diffIndex]) {
+    for (let i = diffIndex; i < code.length; i++) {
+        switch (code[i]) {
             case ">":
-                pointerIndex++;
-                if (pointerIndex >= values.length) {
-                    values.push(0);
-                    addBlock();
+                if (!inLoop) {
+                    pointerIndex++;
+                    if (pointerIndex >= values.length) {
+                        values.push(0);
+                        addBlock();
+                    }
                 }
                 break;
             case "<":
-                pointerIndex--;
-                if (pointerIndex < 0) {
-                    pointerIndex = 0;
-                }
+                if (!inLoop) pointerIndex = Math.max(pointerIndex - 1, 0);
                 break;
             case "+":
-                values[pointerIndex]++;
+                if (!inLoop) values[pointerIndex]++;
                 break;
             case "-":
-                values[pointerIndex]--;
+                if (!inLoop) values[pointerIndex]--;
                 break;
             case "[":
                 if (values[pointerIndex] === 0) {
-                    // Jump to matching closing bracket
-                    let loopEnd = findLoopEnd(oldCode, diffIndex);
-                    diffIndex = loopEnd;
+                    openIndex = i;
+                    let count = 1;
+                    for (let j = i + 1; j < code.length; j++) {
+                        if (code[j] === "[") {
+                            count++;
+                        } else if (code[j] === "]") {
+                            count--;
+                        }
+                        if (count === 0) {
+                            closeIndex = j;
+                            break;
+                        }
+                    }
+                    if (count !== 0) {
+                        // No matching ] found
+                        throw new Error("Unbalanced brackets");
+                    }
+                    inLoop = true;
                 } else {
-                    // Push starting position of loop onto stack
-                    loopStack.push(diffIndex);
+                    loopStack.push(i);
                 }
                 break;
             case "]":
-                // Pop starting position of loop from stack
-                let loopStart = loopStack.pop();
+                if (loopStack.length === 0) {
+                    throw new Error("Unbalanced brackets");
+                }
                 if (values[pointerIndex] !== 0) {
-                    // Jump back to start of loop
-                    diffIndex = loopStart - 1;
-                }
-                break;
-        }
-        diffIndex++;
-    }
-
-    while (diffIndex < code.length) {
-        switch (code[diffIndex]) {
-            case ">":
-                pointerIndex++;
-                if (pointerIndex >= values.length) {
-                    values.push(0);
-                    addBlock();
-                }
-                break;
-            case "<":
-                pointerIndex--;
-                if (pointerIndex < 0) {
-                    pointerIndex = 0;
-                }
-                break;
-            case "+":
-                values[pointerIndex]++;
-                break;
-            case "-":
-                values[pointerIndex]--;
-                break;
-            case "[":
-                if (values[pointerIndex] === 0) {
-                    // Jump to matching closing bracket
-                    let loopEnd = findLoopEnd(code, diffIndex);
-                    diffIndex = loopEnd;
+                    i = loopStack[loopStack.length - 1];
                 } else {
-                    // Push starting position of loop onto stack
-                    loopStack.push(diffIndex);
-                }
-                break;
-            case "]":
-                // Pop starting position of loop from stack
-                let loopStart = loopStack.pop();
-                if (values[pointerIndex] !== 0) {
-                    // Jump back to start of loop
-                    diffIndex = loopStart - 1;
+                    loopStack.pop();
                 }
                 break;
         }
-        diffIndex++;
+        if (loopStack.length === 0) {
+            inLoop = false;
+        }
     }
-
     // Update the display
     updateBlocks();
-
-    // Save the new code for the
+    // Save the new code
     oldCode = code;
 }
+
+
+
 
 document.getElementById("code").addEventListener("keydown", function(event) {
     if (event.key === "Backspace") {
@@ -180,6 +156,14 @@ document.getElementById("code").addEventListener("input", function() {
         init();
     }
     let value = this.value;
+    if (value.length < oldCode.length) {
+        // The user has deleted a portion of the code
+        oldCode="";
+        handleCodeInput(value);
+    } else {
+        // The user has added or modified the code
+        handleCodeInput(oldCode);
+    }
     handleCodeInput(value);
     // Debugging logs
     console.log(value);
