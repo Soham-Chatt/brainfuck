@@ -7,7 +7,7 @@ let oldCode = "";
 let output="";
 
 // Initial settings
-window.onload = init;
+window.onload = init; addBlock();
 
 function init() {
     removeBlocks();
@@ -17,7 +17,7 @@ function init() {
     pointerIndex=0;
     oldCode = "";
     output = "";
-    addBlock(); addBlock();
+    addBlock();
     updateBlocks();
 }
 
