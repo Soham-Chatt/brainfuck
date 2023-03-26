@@ -11,8 +11,9 @@ window.onload = init;
 function init() {
     removeBlocks();
     document.getElementById("code").value = "";
-    values.fill(0);
+    values.length = 1; values.fill(0);
     pointerIndex=0;
+    oldCode = "";
     addBlock();
     updateBlocks();
 }
@@ -47,7 +48,7 @@ function removeBlocks() {
 
 function handleCodeInput(code) {
     // Find the first index at which oldCode and code differ
-    let diffIndex = 0;
+    let diffIndex = 0; let startIndex=-1;
     while (diffIndex < oldCode.length && diffIndex < code.length && oldCode[diffIndex] === code[diffIndex]) {
         diffIndex++;
     }
@@ -81,10 +82,10 @@ function handleCodeInput(code) {
                 values[pointerIndex]--;
                 break;
             case "[":
-                //todo
+                //TODO
                 break;
             case "]":
-                //todo
+                //TODO
                 break;
         }
         diffIndex++;
@@ -111,10 +112,10 @@ function handleCodeInput(code) {
                 values[pointerIndex]--;
                 break;
             case "[":
-                //todo
+                //TODO
                 break;
             case "]":
-                //todo
+                //TODO
                 break;
         }
         diffIndex++;
