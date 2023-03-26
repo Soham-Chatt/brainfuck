@@ -176,9 +176,14 @@ document.getElementById("code").addEventListener("keydown", function(event) {
 
 
 document.getElementById("code").addEventListener("input", function() {
+    if (this.value === "") {
+        init();
+    }
     let value = this.value;
     handleCodeInput(value);
     // Debugging logs
     console.log(value);
     console.log(values[pointerIndex] + " " + pointerIndex);
 });
+
+
