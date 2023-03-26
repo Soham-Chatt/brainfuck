@@ -10,6 +10,8 @@ window.onload = init;
 
 function init() {
     removeBlocks();
+    let outputTextarea = document.getElementById("output");
+    outputTextarea.value = "";
     document.getElementById("code").value = "";
     values.length = 1; values.fill(0);
     pointerIndex=0;
@@ -124,6 +126,10 @@ function handleCodeInput(code) {
                 } else {
                     loopStack.pop();
                 }
+                break;
+            case ".":
+                let outputTextarea = document.getElementById("output");
+                outputTextarea.value += String.fromCharCode(values[pointerIndex]);
                 break;
         }
         if (loopStack.length === 0) {

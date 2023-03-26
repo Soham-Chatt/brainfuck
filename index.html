@@ -10,13 +10,15 @@
 </head>
 <body>
 <div class="container">
-    <h1>Enter the brainfuck code</h1>
-    <textarea class="code-editor" id="code"></textarea>
+    <h1>Visual brainfuck</h1>
+    <div class="textareas">
+        <textarea class="code-editor" id="code" placeholder="Input your code here..."></textarea>
+        <textarea class="output" id="output" placeholder="Output appears here..." readonly></textarea>
+    </div>
     <button class="button" onclick= "init()"> Reset </button>
-    </div>
-    <div class="block-row">
-            <script src="script.js"></script>
-
-    </div>
+</div>
+<div class="block-row">
+    <script src="script.js"></script>
+</div>
 </body>
 </html>
