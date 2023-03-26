@@ -99,12 +99,6 @@ body {
     background-color: #0d8c0d;
 }
 
-pre code {
-  background-color: #eee;
-  border: 1px solid #999;
-  display: block;
-  padding: 20px;
-}
 code {
     background-color: #eee;
 }
