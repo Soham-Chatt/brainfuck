@@ -42,13 +42,13 @@
 
 /* CSS for the individual blocks */
 .block {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #ccc;
-    font-size: 25px;
+    font-size: 30px;
     font-weight: bold;
     margin: 5px;
     background-color: #fff;
