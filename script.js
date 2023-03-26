@@ -10,8 +10,7 @@ window.onload = init;
 
 function init() {
     removeBlocks();
-    let outputTextarea = document.getElementById("output");
-    outputTextarea.value = "";
+    document.getElementById("output").value = "";
     document.getElementById("code").value = "";
     values.length = 1; values.fill(0);
     pointerIndex=0;
