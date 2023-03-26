@@ -80,6 +80,12 @@ function handleCodeInput(code) {
             case "-":
                 values[pointerIndex]--;
                 break;
+            case "[":
+                //todo
+                break;
+            case "]":
+                //todo
+                break;
         }
         diffIndex++;
     }
@@ -103,6 +109,12 @@ function handleCodeInput(code) {
                 break;
             case "-":
                 values[pointerIndex]--;
+                break;
+            case "[":
+                //todo
+                break;
+            case "]":
+                //todo
                 break;
         }
         diffIndex++;
