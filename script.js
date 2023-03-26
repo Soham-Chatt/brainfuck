@@ -154,7 +154,13 @@ document.getElementById("code").addEventListener("keydown", function(event) {
         if (currentCode.length > 0) {
             currentCode = currentCode.slice(0, -1);
         }
+        removeBlocks();
+        values.length = 1; values.fill(0);
+        pointerIndex=0;
         oldCode = "";
+        output = "";
+        addBlock();
+        updateBlocks();
         handleCodeInput(currentCode);
     }
 });
