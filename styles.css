@@ -1,11 +1,20 @@
 /* styles.css */
 
+body {
+    font-family: "Menlo", "Meslo LG", monospace;
+}
+
 /* CSS for the container */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 50px;
+    margin: 20px;
+}
+
+.padding {
+    padding: 40px 200px 200px;
+    text-align:center;
 }
 
 /* CSS for the code editor and output text areas */
@@ -21,7 +30,7 @@
     height: 200px;
     border: 5px solid #5c5c5c;
     padding: 10px;
-    font-family: monospace;
+    font-family: "Menlo", "Meslo LG", monospace;
     font-size: 16px;
     white-space: pre-wrap;
     margin: 20px;
