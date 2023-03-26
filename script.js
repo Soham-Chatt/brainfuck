@@ -1,12 +1,15 @@
 // script.js
+
 let values = new Array(1).fill(0);
 let pointerIndex = 0;
 let blocksContainer = document.querySelector(".block-row");
+let oldCode = "";
 
-// Initial block
+// Initial settings
 window.onload = init;
 
 function init() {
+    removeBlocks();
     document.getElementById("code").value = "";
     values.fill(0);
     pointerIndex=0;
@@ -17,6 +20,7 @@ function init() {
 function updateBlocks() {
     let blocks = document.querySelectorAll(".block");
     blocks[pointerIndex].textContent = values[pointerIndex] ;
+
 }
 
 function addBlock() {
@@ -26,21 +30,35 @@ function addBlock() {
     blocksContainer.appendChild(newBlock);
 }
 
-function handleCodeInput(code) {
-    values.fill(0);
-    let astack = []; // Array to keep track of open brackets
-    let ipointer = -1; // Instruction pointer
-    let end = false; // Flag to signal the end of the program
+function removeBlocks() {
+  let blocks = document.querySelectorAll(".block");
+  for (let i = 0; i < blocks.length; i++) {
+    blocksContainer.removeChild(blocks[i]);
+  }
+}
 
-    while (!end && ipointer < code.length) {
-        ipointer++; // Move to next instruction
-        switch (code[ipointer]) {
+
+function handleCodeInput(code) {
+    // Find the first index at which oldCode and code differ
+    let diffIndex = 0;
+    while (diffIndex < oldCode.length && diffIndex < code.length && oldCode[diffIndex] === code[diffIndex]) {
+        diffIndex++;
+    }
+    // Reset program state if the code has been completely replaced
+    if (diffIndex === 0) {
+        values.fill(0);
+        pointerIndex = 0;
+        removeBlocks();
+        addBlock();
+    }
+    // Apply updates to program state
+    while (diffIndex < oldCode.length) {
+        switch (oldCode[diffIndex]) {
             case ">":
                 pointerIndex++;
                 if (pointerIndex >= values.length) {
                     values.push(0);
                     addBlock();
-                    updateBlocks(); // Update blocks after adding a new block
                 }
                 break;
             case "<":
@@ -51,55 +69,49 @@ function handleCodeInput(code) {
                 break;
             case "+":
                 values[pointerIndex]++;
-                updateBlocks();
                 break;
             case "-":
                 values[pointerIndex]--;
-                updateBlocks();
-                break;
-            case ".":
-                // todo
-                break;
-            case ",":
-                // todo
-                break;
-            case "[":
-                if (values[pointerIndex] === 0) { // If zero
-                    // Skip to matching right bracket
-                    let count = 0;
-                    while (true) {
-                        ipointer++;
-                        if (!code[ipointer]) break;
-                        if (code[ipointer] === "[") count++;
-                        else if (code[ipointer] === "]") {
-                            if (count) count--;
-                            else break;
-                        }
-                    }
-                } else { // If non-zero
-                    astack.push(ipointer);
-                }
-                break;
-            case "]":
-                if (values[pointerIndex] === 0) { // If zero
-                    astack.pop(); // Remove last open bracket from array
-                } else { // If non-zero
-                    ipointer = astack[astack.length - 1] - 1; // Move back to matching open bracket
-                }
-                break;
-            case undefined: // We have reached the end of the program
-                end = true;
-                break;
-            default: // We ignore any character that is not part of regular Brainfuck syntax
                 break;
         }
+        diffIndex++;
     }
+    while (diffIndex < code.length) {
+        switch (code[diffIndex]) {
+            case ">":
+                pointerIndex++;
+                if (pointerIndex >= values.length) {
+                    values.push(0);
+                    addBlock();
+                }
+                break;
+            case "<":
+                pointerIndex--;
+                if (pointerIndex < 0) {
+                    pointerIndex = 0;
+                }
+                break;
+            case "+":
+                values[pointerIndex]++;
+                break;
+            case "-":
+                values[pointerIndex]--;
+                break;
+        }
+        diffIndex++;
+    }
+    // Update the display
+    updateBlocks();
+    // Save the new code for the next update
+    oldCode = code;
 }
+
 
 
 document.getElementById("code").addEventListener("input", function() {
     let value = this.value;
     handleCodeInput(value);
+    // Debugging logs
     console.log(value);
     console.log(values[pointerIndex] + " " + pointerIndex);
 });
