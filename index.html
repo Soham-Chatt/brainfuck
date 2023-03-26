@@ -15,12 +15,15 @@
         <textarea class="code-editor" id="code" placeholder="Input your code here..."></textarea>
         <textarea class="output" id="output" placeholder="Output appears here..." readonly></textarea>
     </div>
-    <button class="button" onclick= "init()"> Reset </button>
+</div>
+<div class="button-container">
+    <button class="red-button" onclick= "init()"> Reset </button>
+    <button class="green-button" onclick="execute()"> Run </button>
 </div>
 <div class="block-row">
     <script src="script.js"></script>
 </div>
-<div class="padding">
+<div class="text-container">
 <h3>What is brainfuck?</h3>
 <p>Brainfuck is an esoteric programming language known for its minimalism and extreme difficulty to program in.
     It uses only eight commands, each represented by a single character, to manipulate a memory tape with cells
@@ -38,6 +41,17 @@
     <p>To write a Brainfuck program, you simply combine these commands to manipulate the memory tape and perform
         computations. While it can be challenging to write complex programs in Brainfuck, simple programs can be
         written relatively easily with some practice.</p>
+    <p>To help with learning brainfuck, I created this visual aid. The blocks represent the cells in the array
+    of the brainfuck language with the corresponding values in their cells. The highlighted cell is the current position
+    of the pointer.</p>
+
+    <p>Example code that prints "Hello World"</p>
+    <pre>
+    <code>++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++. &emsp;prints "Hello" <br>
+        >>. &emsp;prints a space<br>
+        <-.<.+++.------.--------.>>+.>++. &emsp;prints "World!"
+    </code>
+    </pre>
 </div>
 </body>
 </html>

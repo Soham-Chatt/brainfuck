@@ -11,9 +11,16 @@ body {
     align-items: center;
     margin: 20px;
 }
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
 
-.padding {
-    padding: 40px 200px 200px;
+.text-container {
+    padding: 40px 400px 400px;
     text-align:center;
 }
 
@@ -70,19 +77,34 @@ body {
 }
 
 /* Button style */
-.button {
-    border: none;
+.red-button, .green-button {
+    border: 3px solid black;
     background-color: #2e7be0;
     color: #000000;
     border-radius: 5px;
-    padding: 15px 15px;
+    padding: 15px 15px 15px 15px;
     cursor: pointer;
     font-size: 28px;
     font-weight: bold;
 }
 
 /* Button hover effect */
-.button:hover {
+.red-button:hover {
     transition: all 0.3s ease;
     background-color: red;
+}
+
+.green-button:hover {
+    transition: all 0.3s ease;
+    background-color: #0d8c0d;
+}
+
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+code {
+    background-color: #eee;
 }

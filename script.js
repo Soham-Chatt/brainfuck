@@ -4,6 +4,7 @@ let values = new Array(1).fill(0);
 let pointerIndex = 0;
 let blocksContainer = document.querySelector(".block-row");
 let oldCode = "";
+let output="";
 
 // Initial settings
 window.onload = init;
@@ -52,7 +53,6 @@ function handleCodeInput(code) {
     let inLoop = false;
     let openIndex;
     let closeIndex;
-
     // Find the first index at which oldCode and code differ
     while (diffIndex < oldCode.length && diffIndex < code.length && oldCode[diffIndex] === code[diffIndex]) {
         if (oldCode[diffIndex] === "[") {
@@ -127,8 +127,7 @@ function handleCodeInput(code) {
                 }
                 break;
             case ".":
-                let outputTextarea = document.getElementById("output");
-                outputTextarea.value += String.fromCharCode(values[pointerIndex]);
+                output += String.fromCharCode(values[pointerIndex]);
                 break;
         }
         if (loopStack.length === 0) {
@@ -141,7 +140,11 @@ function handleCodeInput(code) {
     oldCode = code;
 }
 
-
+function execute() {
+      let outputTextarea = document.getElementById("output");
+      outputTextarea.value="";
+      outputTextarea.value += output;
+}
 
 
 document.getElementById("code").addEventListener("keydown", function(event) {
