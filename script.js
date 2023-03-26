@@ -14,15 +14,9 @@ function init() {
     updateBlocks();
 }
 
-function removeBlocks() {
-    element = document.getElementById("")
-}
-
 function updateBlocks() {
     let blocks = document.querySelectorAll(".block");
-    for (let i = 0; i < blocks.length; i++) {
-        blocks[i].textContent = blocks[pointerIndex].textContent ;
-    }
+    blocks[pointerIndex].textContent = values[pointerIndex] ;
 }
 
 function addBlock() {
@@ -107,5 +101,5 @@ document.getElementById("code").addEventListener("input", function() {
     let value = this.value;
     handleCodeInput(value);
     console.log(value);
-    console.log(values[pointerIndex]);
+    console.log(values[pointerIndex] + " " + pointerIndex);
 });
