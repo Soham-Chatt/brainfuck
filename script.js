@@ -163,6 +163,16 @@ function handleCodeInput(code) {
     oldCode = code;
 }
 
+document.getElementById("code").addEventListener("keydown", function(event) {
+    if (event.key === "Backspace") {
+        let currentCode = this.value;
+        if (currentCode.length > 0) {
+            currentCode = currentCode.slice(0, -1);
+        }
+        oldCode = "";
+        handleCodeInput(currentCode);
+    }
+});
 
 
 document.getElementById("code").addEventListener("input", function() {
