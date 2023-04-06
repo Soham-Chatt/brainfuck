@@ -46,9 +46,19 @@
     of the pointer.</p>
 
     <p>Example code that prints "Hello World":</p>
-    <pre><code>
-        ++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
-    </code></pre>
+
+    <pre><code id="sample">++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.</code></pre>
+    <button id="copy" onclick="copyToClipboard()">Copy to Clipboard</button>
+    <script>
+        function copyToClipboard() {
+            let code = document.getElementById("sample").innerText;
+            navigator.clipboard.writeText(code);
+            document.getElementById("copy").innerHTML = "Copied &#10003";
+            setTimeout(function() {
+                document.getElementById("copy").innerHTML = "Copy to Clipboard";
+            }, 10000);
+        }
+    </script>
 </div>
 </body>
 </html>

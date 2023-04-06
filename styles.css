@@ -107,4 +107,12 @@ pre code {
 }
 code {
     background-color: #eee;
+    padding: 3px;
+}
+
+.sample {
+    width: 20px;
+    height: 20px;
+    background: black;
+    margin-bottom: 1.5rem;
 }
