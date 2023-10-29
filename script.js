@@ -48,98 +48,108 @@ function removeBlocks() {
     }
 }
 
-function handleCodeInput(code) {
+function handleDiffIndex(oldCode, newCode) {
     let diffIndex = 0;
-    let loopStack = [];
-    let inLoop = false;
-    let openIndex;
-    let closeIndex;
-    // Find the first index at which oldCode and code differ
-    while (diffIndex < oldCode.length && diffIndex < code.length && oldCode[diffIndex] === code[diffIndex]) {
-        if (oldCode[diffIndex] === "[") {
-            loopStack.push(diffIndex);
-        } else if (oldCode[diffIndex] === "]") {
-            loopStack.pop();
-        }
+    while (diffIndex < oldCode.length && diffIndex < newCode.length && oldCode[diffIndex] === newCode[diffIndex]) {
         diffIndex++;
     }
+    return diffIndex;
+}
 
-    // Reset program state if the code has been completely replaced
+function resetStateIfNecessary(diffIndex) {
     if (diffIndex === 0) {
         values.fill(0);
         pointerIndex = 0;
         removeBlocks();
         addBlock();
     }
+}
 
-    // Apply updates to program state
-    for (let i = diffIndex; i < code.length; i++) {
-        switch (code[i]) {
-            case ">":
-                if (!inLoop) {
-                    pointerIndex++;
-                    if (pointerIndex >= values.length) {
-                        values.push(0);
-                        addBlock();
-                    }
-                }
+function handleOpenBracket(i, code, loopStack) {
+    let new_i = i;
+    if (values[pointerIndex] === 0) {
+        let count = 1;
+        for (let j = i + 1; j < code.length; j++) {
+            if (code[j] === "[") count++;
+            else if (code[j] === "]") count--;
+
+            if (count === 0) {
+                new_i = j;
                 break;
-            case "<":
-                if (!inLoop) pointerIndex = Math.max(pointerIndex - 1, 0);
-                break;
-            case "+":
-                if (!inLoop) values[pointerIndex]++;
-                break;
-            case "-":
-                if (!inLoop) values[pointerIndex]--;
-                break;
-            case "[":
-                if (values[pointerIndex] === 0) {
-                    openIndex = i;
-                    let count = 1;
-                    for (let j = i + 1; j < code.length; j++) {
-                        if (code[j] === "[") {
-                            count++;
-                        } else if (code[j] === "]") {
-                            count--;
-                        }
-                        if (count === 0) {
-                            closeIndex = j;
-                            break;
-                        }
-                    }
-                    if (count !== 0) {
-                        // No matching ] found
-                        throw new Error("Unbalanced brackets");
-                    }
-                    inLoop = true;
-                } else {
-                    loopStack.push(i);
-                }
-                break;
-            case "]":
-                if (loopStack.length === 0) {
-                    throw new Error("Unbalanced brackets");
-                }
-                if (values[pointerIndex] !== 0) {
-                    i = loopStack[loopStack.length - 1];
-                } else {
-                    loopStack.pop();
-                }
-                break;
-            case ".":
-                output += String.fromCharCode(values[pointerIndex]);
-                break;
+            }
         }
-        if (loopStack.length === 0) {
-            inLoop = false;
+    } else {
+        loopStack.push(i);
+    }
+    return new_i;
+}
+
+function handleCloseBracket(i, loopStack) {
+    if (loopStack.length === 0) {
+        throw new Error("Unbalanced brackets");
+    }
+    let new_i = (values[pointerIndex] !== 0) ? loopStack[loopStack.length - 1] : i;
+    if (values[pointerIndex] === 0) {
+        loopStack.pop();
+    }
+    return new_i;
+}
+
+function handleSingleCommand(cmd, i, code, loopStack) {
+    let new_i = i;
+    switch (cmd) {
+        case ">":
+            pointerIndex++;
+            if (pointerIndex >= values.length) {
+                values.push(0);
+                addBlock();
+            }
+            break;
+        case "<":
+            pointerIndex = Math.max(pointerIndex - 1, 0);
+            break;
+        case "+":
+            values[pointerIndex]++;
+            break;
+        case "-":
+            values[pointerIndex]--;
+            break;
+        case "[":
+            new_i = handleOpenBracket(i, code, loopStack);
+            break;
+        case "]":
+            new_i = handleCloseBracket(i, loopStack);
+            break;
+        case ".":
+            output += String.fromCharCode(values[pointerIndex]);
+            break;
+    }
+    return new_i;
+}
+
+function handleCodeInput(code) {
+    let warningElement = document.getElementById("warning");
+    warningElement.textContent = "";  // Clear any existing warning
+
+    let diffIndex = handleDiffIndex(oldCode, code);
+    resetStateIfNecessary(diffIndex);
+    let iterations = 0;
+    const MAX_ITERATIONS = 10000;
+
+    let loopStack = [];
+    for (let i = diffIndex; i < code.length; ) {
+        i = handleSingleCommand(code[i], i, code, loopStack);
+        i++;
+        if (iterations++ > MAX_ITERATIONS) {
+            warningElement.textContent = "Warning: Too many iterations, possible infinite loop.";
+            break;
         }
     }
-    // Update the display
+
     updateBlocks();
-    // Save the new code
     oldCode = code;
 }
+
 
 function execute() {
       let outputTextarea = document.getElementById("output");
@@ -165,19 +175,16 @@ document.getElementById("code").addEventListener("keydown", function(event) {
 
 
 document.getElementById("code").addEventListener("input", function() {
-    if (this.value === "") {
-        init();
-    }
     let value = this.value;
+
+    // If the new code is shorter than the old code, reset and re-run
     if (value.length < oldCode.length) {
-        // The user has deleted a portion of the code
-        oldCode="";
+        init();
         handleCodeInput(value);
     } else {
-        // The user has added or modified the code
-        handleCodeInput(oldCode);
+        handleCodeInput(value);
     }
-    handleCodeInput(value);
+
     // Debugging logs
     console.log(value);
     console.log(values[pointerIndex] + " " + pointerIndex);
