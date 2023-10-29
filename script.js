@@ -127,9 +127,27 @@ function handleSingleCommand(cmd, i, code, loopStack) {
     return new_i;
 }
 
+function isValidBrainfuck(code) {
+    let stack = [];
+    for (let i = 0; i < code.length; i++) {
+        if (code[i] === '[') {
+            stack.push(i);
+        } else if (code[i] === ']') {
+            if (stack.length === 0) return false;  // Unmatched ']'
+            stack.pop();
+        }
+    }
+    return stack.length === 0;
+}
+
 function handleCodeInput(code) {
     let warningElement = document.getElementById("warning");
     warningElement.textContent = "";  // Clear any existing warning
+
+    if (!isValidBrainfuck(code)) {
+        warningElement.textContent = "Warning: Invalid Brainfuck code.";
+        return;
+    }
 
     let diffIndex = handleDiffIndex(oldCode, code);
     resetStateIfNecessary(diffIndex);
@@ -150,13 +168,11 @@ function handleCodeInput(code) {
     oldCode = code;
 }
 
-
 function execute() {
       let outputTextarea = document.getElementById("output");
       outputTextarea.value="";
       outputTextarea.value += output;
 }
-
 
 document.getElementById("code").addEventListener("keydown", function(event) {
     if (event.key === "Backspace") {
