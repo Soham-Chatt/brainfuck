@@ -95,6 +95,18 @@ function handleCloseBracket(i, loopStack) {
     return new_i;
 }
 
+function handleUserInput() {
+    let userInput;
+    while (true) {
+        userInput = prompt("Input a single character:");
+        if (userInput !== null && userInput.length === 1) {
+            return userInput.charCodeAt(0);  // Convert to ASCII and return
+        } else {
+            alert("No valid character input. Please enter a single character.");
+        }
+    }
+}
+
 function handleSingleCommand(cmd, i, code, loopStack) {
     let new_i = i;
     switch (cmd) {
@@ -122,6 +134,9 @@ function handleSingleCommand(cmd, i, code, loopStack) {
             break;
         case ".":
             output += String.fromCharCode(values[pointerIndex]);
+            break;
+        case ",":
+            values[pointerIndex] = handleUserInput();
             break;
     }
     return new_i;
