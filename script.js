@@ -99,7 +99,8 @@ function handleUserInput() {
     let userInput;
     while (true) {
         userInput = prompt("Input a single character:");
-        if (userInput !== null && userInput.length === 1) {
+        if (userInput === null) return null;  // Cancelled
+        if (userInput.length === 1) {
             return userInput.charCodeAt(0);  // Convert to ASCII and return
         } else {
             alert("No valid character input. Please enter a single character.");
@@ -136,7 +137,15 @@ function handleSingleCommand(cmd, i, code, loopStack) {
             output += String.fromCharCode(values[pointerIndex]);
             break;
         case ",":
-            values[pointerIndex] = handleUserInput();
+            let userInput = handleUserInput();
+            if (userInput !== null) {
+                values[pointerIndex] = userInput;
+            } else {
+                let codeTextarea = document.getElementById("code");
+                codeTextarea.value = code.substring(0, i) + code.substring(i+1);
+                handleCodeInput(codeTextarea.value);
+                return code.length;
+            }
             break;
     }
     return new_i;
@@ -189,17 +198,21 @@ function execute() {
       outputTextarea.value += output;
 }
 
+function resetState() {
+    removeBlocks();
+    values.length = 2; values.fill(0);
+    pointerIndex=0;
+    oldCode = "";
+    output = "";
+}
+
 document.getElementById("code").addEventListener("keydown", function(event) {
     if (event.key === "Backspace") {
         let currentCode = this.value;
         if (currentCode.length > 0) {
             currentCode = currentCode.slice(0, -1);
         }
-        removeBlocks();
-        values.length = 2; values.fill(0);
-        pointerIndex=0;
-        oldCode = "";
-        output = "";
+        resetState();
         handleCodeInput(currentCode);
     }
 });
