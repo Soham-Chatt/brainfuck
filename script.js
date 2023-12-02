@@ -4,232 +4,242 @@ let values = new Array(2).fill(0);
 let pointerIndex = 0;
 let blocksContainer = document.querySelector(".block-row");
 let oldCode = "";
-let output="";
+let output = "";
 
 // Initial settings
-window.onload = init; addBlock();
+window.onload = init;
+addBlock();
 
 function init() {
-    removeBlocks();
-    document.getElementById("output").value = "";
-    document.getElementById("code").value = "";
-    values.length = 2; values.fill(0);
-    pointerIndex=0;
-    oldCode = "";
-    output = "";
-    addBlock();
-    updateBlocks();
+  removeBlocks();
+  document.getElementById("output").value = "";
+  document.getElementById("code").value = "";
+  values.length = 2;
+  values.fill(0);
+  pointerIndex = 0;
+  oldCode = "";
+  output = "";
+  addBlock();
+  updateBlocks();
 }
 
 function updateBlocks() {
-    let blocks = document.querySelectorAll(".block");
-    for (let i = 0; i < blocks.length; i++) {
-        if (i === pointerIndex) {
-            blocks[i].classList.add("current");
-        } else {
-            blocks[i].classList.remove("current");
-        }
-        blocks[i].textContent = values[i];
+  let blocks = document.querySelectorAll(".block");
+  for (let i = 0; i < blocks.length; i++) {
+    if (i === pointerIndex) {
+      blocks[i].classList.add("current");
+    } else {
+      blocks[i].classList.remove("current");
     }
+    blocks[i].textContent = values[i];
+  }
 
 }
 
 function addBlock() {
-    let newBlock = document.createElement("div");
-    newBlock.classList.add("block");
-    newBlock.textContent = "0";
-    blocksContainer.appendChild(newBlock);
+  let newBlock = document.createElement("div");
+  newBlock.classList.add("block");
+  newBlock.textContent = "0";
+  blocksContainer.appendChild(newBlock);
 }
 
 function removeBlocks() {
-    let blocks = document.querySelectorAll(".block");
-    for (let i = 0; i < blocks.length-1; i++) {
-      blocksContainer.removeChild(blocks[i]);
-    }
+  let blocks = document.querySelectorAll(".block");
+  for (let i = 0; i < blocks.length - 1; i++) {
+    blocksContainer.removeChild(blocks[i]);
+  }
 }
 
 function handleDiffIndex(oldCode, newCode) {
-    let diffIndex = 0;
-    while (diffIndex < oldCode.length && diffIndex < newCode.length && oldCode[diffIndex] === newCode[diffIndex]) {
-        diffIndex++;
-    }
-    return diffIndex;
+  let diffIndex = 0;
+  while (diffIndex < oldCode.length && diffIndex < newCode.length && oldCode[diffIndex] === newCode[diffIndex]) {
+    diffIndex++;
+  }
+  return diffIndex;
 }
 
 function resetStateIfNecessary(diffIndex) {
-    if (diffIndex === 0) {
-        values.fill(0);
-        pointerIndex = 0;
-        removeBlocks();
-        addBlock();
-    }
+  if (diffIndex === 0) {
+    values.fill(0);
+    pointerIndex = 0;
+    removeBlocks();
+    addBlock();
+  }
 }
 
 function handleOpenBracket(i, code, loopStack) {
-    let new_i = i;
-    if (values[pointerIndex] === 0) {
-        let count = 1;
-        for (let j = i + 1; j < code.length; j++) {
-            if (code[j] === "[") count++;
-            else if (code[j] === "]") count--;
+  let new_i = i;
+  if (values[pointerIndex] === 0) {
+    let count = 1;
+    for (let j = i + 1; j < code.length; j++) {
+      if (code[j] === "[") count++;
+      else if (code[j] === "]") count--;
 
-            if (count === 0) {
-                new_i = j;
-                break;
-            }
-        }
-    } else {
-        loopStack.push(i);
+      if (count === 0) {
+        new_i = j;
+        break;
+      }
     }
-    return new_i;
+  } else {
+    loopStack.push(i);
+  }
+  return new_i;
 }
 
 function handleCloseBracket(i, loopStack) {
-    if (loopStack.length === 0) {
-        throw new Error("Unbalanced brackets");
-    }
-    let new_i = (values[pointerIndex] !== 0) ? loopStack[loopStack.length - 1] : i;
-    if (values[pointerIndex] === 0) {
-        loopStack.pop();
-    }
-    return new_i;
+  if (loopStack.length === 0) {
+    throw new Error("Unbalanced brackets");
+  }
+  let new_i = (values[pointerIndex] !== 0) ? loopStack[loopStack.length - 1] : i;
+  if (values[pointerIndex] === 0) {
+    loopStack.pop();
+  }
+  return new_i;
 }
 
 function handleUserInput() {
-    let userInput;
-    while (true) {
-        userInput = prompt("Input a single character:");
-        if (userInput === null) return null;  // Cancelled
-        if (userInput.length === 1) {
-            return userInput.charCodeAt(0);  // Convert to ASCII and return
-        } else {
-            alert("No valid character input. Please enter a single character.");
-        }
+  let userInput;
+  while (true) {
+    userInput = prompt("Input a single character:");
+    if (userInput === null) return null;  // Cancelled
+    if (userInput.length === 1) {
+      return userInput.charCodeAt(0);  // Convert to ASCII and return
+    } else {
+      alert("No valid character input. Please enter a single character.");
     }
+  }
 }
 
 function handleSingleCommand(cmd, i, code, loopStack) {
-    let new_i = i;
-    switch (cmd) {
-        case ">":
-            pointerIndex++;
-            if (pointerIndex >= values.length) {
-                values.push(0);
-                addBlock();
-            }
-            break;
-        case "<":
-            pointerIndex = Math.max(pointerIndex - 1, 0);
-            break;
-        case "+":
-            values[pointerIndex]++;
-            break;
-        case "-":
-            values[pointerIndex]--;
-            break;
-        case "[":
-            new_i = handleOpenBracket(i, code, loopStack);
-            break;
-        case "]":
-            new_i = handleCloseBracket(i, loopStack);
-            break;
-        case ".":
-            output += String.fromCharCode(values[pointerIndex]);
-            break;
-        case ",":
-            let userInput = handleUserInput();
-            if (userInput !== null) {
-                values[pointerIndex] = userInput;
-            } else {
-                let codeTextarea = document.getElementById("code");
-                codeTextarea.value = code.substring(0, i) + code.substring(i+1);
-                handleCodeInput(codeTextarea.value);
-                return code.length;
-            }
-            break;
-    }
-    return new_i;
+  let new_i = i;
+  switch (cmd) {
+    case ">":
+      pointerIndex++;
+      if (pointerIndex >= values.length) {
+        values.push(0);
+        addBlock();
+      }
+      break;
+    case "<":
+      pointerIndex = Math.max(pointerIndex - 1, 0);
+      break;
+    case "+":
+      values[pointerIndex]++;
+      break;
+    case "-":
+      values[pointerIndex]--;
+      break;
+    case "[":
+      new_i = handleOpenBracket(i, code, loopStack);
+      break;
+    case "]":
+      new_i = handleCloseBracket(i, loopStack);
+      break;
+    case ".":
+      output += String.fromCharCode(values[pointerIndex]);
+      break;
+    case ",":
+      let userInput = handleUserInput();
+      if (userInput !== null) {
+        values[pointerIndex] = userInput;
+      } else {
+        let codeTextarea = document.getElementById("code");
+        codeTextarea.value = code.substring(0, i) + code.substring(i + 1);
+        handleCodeInput(codeTextarea.value);
+        return code.length;
+      }
+      break;
+  }
+  return new_i;
 }
 
 function isValidBrainfuck(code) {
-    let stack = [];
-    for (let i = 0; i < code.length; i++) {
-        if (code[i] === '[') {
-            stack.push(i);
-        } else if (code[i] === ']') {
-            if (stack.length === 0) return false;  // Unmatched ']'
-            stack.pop();
-        }
+  let stack = [];
+  for (let i = 0; i < code.length; i++) {
+    if (code[i] === '[') {
+      stack.push(i);
+    } else if (code[i] === ']') {
+      if (stack.length === 0) throw new Error("Expected opening [ before ] at position " + i);
+      stack.pop();
     }
-    return stack.length === 0;
+  }
+
+  if (stack.length !== 0) {
+    throw new Error("Expected closing ] for [ at position " + stack[stack.length - 1]);
+  }
+
+  return true;
 }
 
 function handleCodeInput(code) {
-    let warningElement = document.getElementById("warning");
-    warningElement.textContent = "";  // Clear any existing warning
+  let warningElement = document.getElementById("warning");
+  warningElement.textContent = "";  // Clear any existing warning
 
-    if (!isValidBrainfuck(code)) {
-        warningElement.textContent = "Warning: Invalid Brainfuck code.";
-        return;
+  try {
+    isValidBrainfuck(code);
+  } catch (e) {
+    warningElement.textContent = "Warning: " + e.message;
+    return;
+  }
+
+  let diffIndex = handleDiffIndex(oldCode, code);
+  resetStateIfNecessary(diffIndex);
+  let iterations = 0;
+  const MAX_ITERATIONS = 10000;
+
+  let loopStack = [];
+  for (let i = diffIndex; i < code.length;) {
+    i = handleSingleCommand(code[i], i, code, loopStack);
+    i++;
+    if (iterations++ > MAX_ITERATIONS) {
+      warningElement.textContent = "Warning: Too many iterations, possible infinite loop.";
+      break;
     }
+  }
 
-    let diffIndex = handleDiffIndex(oldCode, code);
-    resetStateIfNecessary(diffIndex);
-    let iterations = 0;
-    const MAX_ITERATIONS = 10000;
-
-    let loopStack = [];
-    for (let i = diffIndex; i < code.length; ) {
-        i = handleSingleCommand(code[i], i, code, loopStack);
-        i++;
-        if (iterations++ > MAX_ITERATIONS) {
-            warningElement.textContent = "Warning: Too many iterations, possible infinite loop.";
-            break;
-        }
-    }
-
-    updateBlocks();
-    oldCode = code;
+  updateBlocks();
+  oldCode = code;
 }
 
 function execute() {
-      let outputTextarea = document.getElementById("output");
-      outputTextarea.value="";
-      outputTextarea.value += output;
+  let outputTextarea = document.getElementById("output");
+  outputTextarea.value = "";
+  outputTextarea.value += output;
 }
 
 function resetState() {
-    removeBlocks();
-    values.length = 2; values.fill(0);
-    pointerIndex=0;
-    oldCode = "";
-    output = "";
+  removeBlocks();
+  values.length = 2;
+  values.fill(0);
+  pointerIndex = 0;
+  oldCode = "";
+  output = "";
 }
 
-document.getElementById("code").addEventListener("keydown", function(event) {
-    if (event.key === "Backspace") {
-        let currentCode = this.value;
-        if (currentCode.length > 0) {
-            currentCode = currentCode.slice(0, -1);
-        }
-        resetState();
-        handleCodeInput(currentCode);
+document.getElementById("code").addEventListener("keydown", function (event) {
+  if (event.key === "Backspace") {
+    let currentCode = this.value;
+    if (currentCode.length > 0) {
+      currentCode = currentCode.slice(0, -1);
     }
+    resetState();
+    handleCodeInput(currentCode);
+  }
 });
 
 
-document.getElementById("code").addEventListener("input", function() {
-    let value = this.value;
+document.getElementById("code").addEventListener("input", function () {
+  let value = this.value;
 
-    // If the new code is shorter than the old code, reset and re-run
-    if (value.length < oldCode.length) {
-        init();
-        handleCodeInput(value);
-    } else {
-        handleCodeInput(value);
-    }
+  // If the new code is shorter than the old code, reset and re-run
+  if (value.length < oldCode.length) {
+    init();
+    handleCodeInput(value);
+  } else {
+    handleCodeInput(value);
+  }
 
-    // Debugging logs
-    console.log(value);
-    console.log(values[pointerIndex] + " " + pointerIndex);
+  // Debugging logs
+  console.log(value);
+  console.log(values[pointerIndex] + " " + pointerIndex);
 });
